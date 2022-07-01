@@ -1,0 +1,17 @@
+POST http://0.0.0.0:8082/places
+street=content&cross_street=anam&postion=nord_east&longitude=545&lagitude=484:
+
+###
+
+POST http://0.0.0.0:8082/places
+content-type: application/x-www-form-urlencoded
+street=content&cross_street=anam&postion=nord_east&longitude=545&lagitude=484:
+
+###
+
+POST http://0.0.0.0:8082/places
+Accept: application/x-www-form-urlencoded
+street=content&cross_street=anam&postion=nord_east&longitude=545&lagitude=484:
+
+###
+
