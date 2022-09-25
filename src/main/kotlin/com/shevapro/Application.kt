@@ -37,6 +37,7 @@ fun Application.module() {
         templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
     }
 
+
     configureSecurity()
     configureSession()
     configureRouting()

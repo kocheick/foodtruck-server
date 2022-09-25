@@ -1,9 +1,7 @@
 package com.shevapro.services
 
 import com.shevapro.data.repository.users.UsersReposiroty
-import com.shevapro.data.repository.usersplaces.UsersPlacesRepository
 import java.util.*
-import java.util.concurrent.atomic.AtomicInteger
 
 class UserService(private val userRepo: UsersReposiroty) {
     private var _sessionCounter = 0
@@ -15,7 +13,7 @@ class UserService(private val userRepo: UsersReposiroty) {
     suspend fun getUserByEmail(email: String) = userRepo.getUserByEmail(email)
     suspend fun removeUserById(id: UUID) = userRepo.removeUserById(id)
     suspend fun removeUserByEmail(email: String) = userRepo.removeUserByEmail(email)
-    suspend fun updateUserById(id: UUID , email: String="", username: String="") = userRepo.update(id, email, username)
+    suspend fun updateUserById(id: UUID , email: String="", username: String="", newPasswordHash : String) = userRepo.updateUserInfo(id, email, username,newPasswordHash)
     suspend fun doesUserWithEmailExist(email: String): Boolean {
        return userRepo.getUserByEmail(email) != null
     }

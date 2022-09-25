@@ -10,9 +10,8 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.mobileVoteRoute(userService: UserService, placesService: PlacesService){
-    routing {
-        route("mobile/places/"){
+fun Route.mobileVoteRoute(userService: UserService, placesService: PlacesService){
+        route("/places/"){
             post("vote") {
                 val voteRequest = try {
                     call.receive<VoteRequest>()
@@ -46,5 +45,5 @@ fun Application.mobileVoteRoute(userService: UserService, placesService: PlacesS
             }
 
         }
-    }
+
 }

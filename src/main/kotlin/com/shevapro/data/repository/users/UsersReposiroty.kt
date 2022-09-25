@@ -7,7 +7,7 @@ interface UsersReposiroty {
     suspend fun createUser(username:String, email: String, passwordHash: String,)
     suspend fun getUserByEmail(email:String): User?
     suspend fun getUserById(id:UUID) : User?
-    suspend fun update(id:UUID,email: String,username: String)
+    suspend fun updateUserInfo(id:UUID, email: String, username: String, newPasswordHash: String)
     suspend fun removeUserById(id: UUID)
     suspend fun removeUserByEmail(email: String)
     suspend fun addVoteForUser(userId: UUID, placeId: UUID)

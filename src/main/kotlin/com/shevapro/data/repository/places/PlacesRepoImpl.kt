@@ -1,34 +1,29 @@
 package com.shevapro.data.repository.places
 
 import com.shevapro.data.models.*
-import com.shevapro.data.places
 import com.shevapro.data.repository.db.dbQuery
-import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.DayOfWeek
-import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.sql.*
-import java.text.SimpleDateFormat
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 class PlacesRepoImpl : PlacesRepository {
 
     fun initSample() {
-        runBlocking {
-            places.forEach {
-                val byUserWithID = UUID.randomUUID()
-                create(
-                    it.address.street, it.address.crossStreet,
-                    it.address.streetPosition!!.name, it.coordinates.latitude, it.coordinates.longitude, byUserWithID
-                )
-            }
-        }
+//        runBlocking {
+//            places.forEach {
+//                val byUserWithID = UUID.randomUUID()
+//                create(
+//                    it.address.street, it.address.crossStreet,
+//                    it.address.streetPosition!!.name, it.coordinates.latitude, it.coordinates.longitude, byUserWithID
+//                )
+//            }
+//        }
     }
 
     override suspend fun create(
         street: String, crossStreet: String,
-        streetPosition: String, latitude: Double, longitude: Double, byUserWithID: UUID,
+        streetPosition: String, latitude: Double, longitude: Double, hours: List<BusinessHours>, byUserWithID: UUID,
     ) {
         val placeId = UUID.randomUUID()
         val creationDate = System.currentTimeMillis()
@@ -43,55 +38,71 @@ class PlacesRepoImpl : PlacesRepository {
                 it[this.longitude] = longitude
                 it[this.createdAt] = creationDate
                 it[this.modifiedAt] = creationDate
-                it[this.byUserWithId] = byUserWithID
+                it[this.createdByUserID] = byUserWithID
+                it[this.modifiedByUserID] = byUserWithID
             }
-
         }
-        val min = listOf(0,15,30,45)
-
-        DayOfWeek.values().take((1..7).random()).forEach {
-            val openHour = LocalTime.of((7..12).random(),min.random())!!
-            val closeHour =  LocalTime.of((13..23).random(),min.random())!!
-            addBusinessHours(
-                placeId, it, openHour, closeHour
-            )
-        }
+        addHours(placeId, hours)
 
     }
 
-    override suspend fun addBusinessHours(
+    private suspend fun addHours(placeId: UUID, hours: List<BusinessHours>) {
+        hours.forEach {
+            addHourItem(placeId, it.day, it.openingTime, it.closingTime, it.isClosed)
+        }
+    }
+
+    private suspend fun addHourItem(
         placeId: UUID, dayOfWeek: DayOfWeek, openHour: LocalTime,
-        closHour: LocalTime
+        closHour: LocalTime,
+        isClosed: Boolean
     ) {
         dbQuery {
             PlacesHours.insert {
-                it[placeid] = placeId
+                it[this.placeId] = placeId
                 it[this.dayOfWeek] = dayOfWeek.value
-                it[this.openTime] = openHour.toString()
-                it[this.closeTime] = closHour.toString()
+                it[this.openingTime] = openHour.toString()
+                it[this.closingTime] = closHour.toString()
+                it[this.isClosed] = isClosed
             }
         }
     }
 
-    override suspend fun updateBusinessHourForPlace(
+    private suspend fun updateBusinessHourForPlace(
         placeId: UUID,
         dayOfWeek: DayOfWeek,
-        openHour: LocalTime,
-        closHour: LocalTime
+        openingTime: LocalTime,
+        closingTime: LocalTime,
+        isClosed: Boolean
     ) {
-        dbQuery {
-            PlacesHours.update({ PlacesHours.placeid eq placeId }) {
-                it[this.placeid] = placeId
-                it[this.dayOfWeek] = dayOfWeek.value
-                it[this.openTime] = openHour.toString()
-                it[this.closeTime] = closHour.toString()
+
+        //if item exist, will update otherwise add new item
+        val id = dbQuery {
+            PlacesHours.select { PlacesHours.placeId eq placeId }.andWhere {  PlacesHours.dayOfWeek eq dayOfWeek.value}.singleOrNull()
+               ?.get(PlacesHours.id) }
+            if (id != null){
+                dbQuery {
+                    PlacesHours.update(({ PlacesHours.id eq id })) {
+                        it[PlacesHours.dayOfWeek] = dayOfWeek.value
+                        it[this.openingTime] = openingTime.toString()
+                        it[this.closingTime] = closingTime.toString()
+                        it[this.isClosed] = isClosed
+                    }
+                }
+
+            } else {
+                addHourItem(placeId,dayOfWeek,openingTime,closingTime,isClosed)
             }
-        }
+
+
+
+
     }
 
     override suspend fun removeById(id: UUID) {
         dbQuery {
-            PlacesHours.deleteWhere { PlacesHours.placeid eq id }
+            PlacesHours.deleteWhere { PlacesHours.placeId eq id }
+            UsersPlaces.deleteWhere { UsersPlaces.place eq id }
             Places.deleteWhere { Places.id eq id }
 
         }
@@ -99,7 +110,7 @@ class PlacesRepoImpl : PlacesRepository {
 
     override suspend fun update(
         id: UUID, street: String, crossStreet: String,
-        streetPosition: String, latitude: Double, longitude: Double,
+        streetPosition: String, latitude: Double, longitude: Double, hours: List<BusinessHours>, byUserWithID: UUID
     ) {
         dbQuery {
             Places.update({ Places.id eq id }) {
@@ -109,7 +120,12 @@ class PlacesRepoImpl : PlacesRepository {
                 it[this.latitude] = latitude
                 it[this.longitude] = longitude
                 it[this.modifiedAt] = System.currentTimeMillis()
+                it[this.modifiedByUserID ] = byUserWithID
             }
+
+        }
+        hours.forEach {
+            updateBusinessHourForPlace(id,it.day,it.openingTime,it.closingTime,it.isClosed)
         }
 
     }
@@ -123,7 +139,8 @@ class PlacesRepoImpl : PlacesRepository {
 
     private fun getVoteCountForPlace(placeId: UUID): Int =
         UsersPlaces.select {
-            UsersPlaces.place eq placeId }.count().toInt()
+            UsersPlaces.place eq placeId
+        }.count().toInt()
 
 
     override suspend fun getPlacesAround(userLocation: Coordinates): List<Place> {
@@ -154,17 +171,17 @@ class PlacesRepoImpl : PlacesRepository {
         //  val createdAt = row[Places.createdAt]
 
         val modifedAt = row[Places.modifiedAt]!!
-        val businessHours = PlacesHours.select { PlacesHours.placeid eq id }.map {
-                hrow->
-            val openTime = hrow[PlacesHours.openTime]
-            val closeTime = hrow[PlacesHours.closeTime]
+        val businessHours = PlacesHours.select { PlacesHours.placeId eq id }.map { hrow ->
+            val openTime = hrow[PlacesHours.openingTime]
+            val closeTime = hrow[PlacesHours.closingTime]
+            val isClosed = hrow[PlacesHours.isClosed]
 
             val day = DayOfWeek.of(hrow[PlacesHours.dayOfWeek])
-            val openhours = LocalTime.of(openTime.substringBefore(":").toInt(),openTime.substringAfter(":").toInt())
-            val closehours =LocalTime.of(closeTime.substringBefore(":").toInt(),closeTime.substringAfter(":").toInt())
+            val openhours = LocalTime.of(openTime.substringBefore(":").toInt(), openTime.substringAfter(":").toInt())
+            val closehours = LocalTime.of(closeTime.substringBefore(":").toInt(), closeTime.substringAfter(":").toInt())
 
-            BusinessHours(day, openhours, closehours)
-        }.toList()
+            BusinessHours(day, openhours, closehours, isClosed)
+        }.toList().sortedBy { it.day }
 
 
 
@@ -175,3 +192,4 @@ class PlacesRepoImpl : PlacesRepository {
 
     }
 }
+

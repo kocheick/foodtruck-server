@@ -1,5 +1,6 @@
 package com.shevapro.services
 
+import com.shevapro.data.models.BusinessHours
 import com.shevapro.data.repository.places.PlacesRepository
 import kotlinx.datetime.DayOfWeek
 import java.time.LocalTime
@@ -17,9 +18,10 @@ class PlacesService(private val placesRepo: PlacesRepository) {
         position: String,
         latitude: Double,
         longitude: Double,
+        hours: List<BusinessHours>,
         byUserWithID: UUID
     ) {
-        placesRepo.create(street, crossStreet, position, latitude, longitude, byUserWithID)
+        placesRepo.create(street, crossStreet, position, latitude, longitude, hours,byUserWithID)
     }
 
     suspend fun getPlacesAround(latitude: Double, longitude: Double, distance: Int = 0) {
@@ -34,12 +36,9 @@ class PlacesService(private val placesRepo: PlacesRepository) {
         position: String,
         latitude: Double = Double.NaN,
         longitude: Double = Double.NaN,
-    ) = placesRepo.update(id, street, crossStreet, position, latitude, longitude)
+        hours: List<BusinessHours>, byUserWithID: UUID
+    ) = placesRepo.update(id, street, crossStreet, position, latitude, longitude,hours,byUserWithID)
 
-    suspend fun updateBusinessHours(
-        placeId: UUID, dayOfWeek: DayOfWeek = DayOfWeek.MONDAY, openHour: LocalTime,
-        closHour: LocalTime
-    ) = placesRepo.addBusinessHours(placeId, dayOfWeek, openHour, closHour)
 
     suspend fun getPlaceById(id: UUID) = placesRepo.getPlaceById(id)
 

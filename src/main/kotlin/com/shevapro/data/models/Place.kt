@@ -2,10 +2,10 @@ package com.shevapro.data.models
 
 import com.shevapro.LocalTimeSerializer
 import com.shevapro.UUIDSerializer
+import com.shevapro.plugins.PositionSerializer
 import kotlinx.datetime.DayOfWeek
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Table
 import java.time.LocalTime
@@ -20,7 +20,7 @@ data class Place(
     val address: Address,
     @SerialName("number_of_votes") val numberOfVotes: Int = 0,
     val lastUpdateDate: Long,
-    val businessHours: List<BusinessHours>
+    @SerialName("business_hours")val businessHours: List<BusinessHours>
 
 )
 
@@ -31,8 +31,10 @@ data class Address(
     @SerialName("street_position") val streetPosition: Position? = null
 )
 
-@Serializable
+@Serializable(with = PositionSerializer::class)
+@SerialName("street_position")
 enum class Position {
+//    nord_west, nord_east, south_east, south_west, n_a
     NORD_WEST, NORD_EAST, SOUTH_EAST, SOUTH_WEST, N_A
 }
 
@@ -43,7 +45,8 @@ data class Coordinates(
 )
 
 @Serializable
-data class BusinessHours(val day: DayOfWeek, @SerialName("open_time") val openTime: @Serializable(LocalTimeSerializer::class) LocalTime,@SerialName("close_time") val closeTime: @Serializable(LocalTimeSerializer::class) LocalTime)
+data class BusinessHours(val day: DayOfWeek, @SerialName("opening_time") val openingTime: @Serializable(LocalTimeSerializer::class) LocalTime, @SerialName("closing_time") val closingTime: @Serializable(LocalTimeSerializer::class) LocalTime, @SerialName("is_closed")val isClosed : Boolean ){
+}
 
 // DB Model
 object Places : Table() {
@@ -56,30 +59,33 @@ object Places : Table() {
     val latitude = double("latitude")
     val longitude = double("longitude")
     val createdAt = long("created_at")
+//    val createdby = uuid("created_by_user").references(Users.id)
+    val modifiedByUserID = uuid("modified_by_user").references(Users.id)
     val modifiedAt = long("modified_at").nullable()
 
     //should be separate table to store users who updates place's table
-    val byUserWithId = uuid("user_uuid").references(Users.id)
+    val createdByUserID = uuid("created_by_user").references(Users.id)
 
     //val users = reference("user",Users.id)
 }
 
 
 object PlacesHours : IntIdTable() {
-    val placeid = reference("place_id", Places.id)
+    val placeId = reference("place_id", Places.id)
     val dayOfWeek = integer("week_day") // 1-7 representing days in a week
-    val openTime = text("open_hour")
-    val closeTime = text("close_hour")
+    val openingTime = text("opening_hour")
+    val closingTime = text("closing_hour")
+    val isClosed = bool("is_closed")
 }
-
 @Serializable
-data class NewPlaceDTO(
+data class PlaceDTO(
     val id: String? =null,
     val street: String? = null,
-    val crossStreet: String?= null,
-    val position: Position? = null,
+    @SerialName("cross_street") val crossStreet: String?=null,
+    @SerialName("street_position") val streetPosition: Position? = null,
     val latitude: Double? = null,
     val longitude: Double? = null,
+    @SerialName("business_hours")val businessHours: List<BusinessHours> = emptyList(),
     val byUserId : String
 )
 

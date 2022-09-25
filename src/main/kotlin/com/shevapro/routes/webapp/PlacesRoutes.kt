@@ -46,11 +46,25 @@ fun Application.placesRoutes(placesService: PlacesService, userService: UserServ
             }
 
 
+
             get("/management/clear") {
                 call.respond(HttpStatusCode.Accepted, placesService.clearPlaces())
             }
 
             authenticate("auth-session") {
+
+                delete("{place_id}"){
+                    val request = call.parameters
+                    val placeToRemove = request["place_id"]?.toUUID() ?: return@delete call.respond(HttpStatusCode.OK, "Parameter place_id is absent")
+                    val place = placesService.getPlaceById(placeToRemove)
+                    if (place!=null){
+                        placesService.removePlaceById(placeToRemove)
+                        call.respond(HttpStatusCode.OK)
+                    } else {
+                        call.respond(HttpStatusCode.NotFound,"Place with ID $placeToRemove does not exist.")
+                    }
+                }
+
                 post("{place_id}") {
                     val user = call.sessions.get<UserSession>()?.let { userService.getUserByID(it.userId) }
                     val param = call.receiveParameters()
@@ -115,11 +129,10 @@ fun Application.placesRoutes(placesService: PlacesService, userService: UserServ
                     } else {
                         try {
                             if (id != null) {
-                                placesService.updatePlace(
-                                    id.toUUID(), street,
-                                    crossStreet, position,
-                                    latitude, longitude
-                                )
+//                                placesService.updatePlace(
+//                                    id.toUUID(), street,
+//                                    crossStreet, position,
+//                                    latitude, longitude)
                                 val places = placesService.getPlaces().sortedByDescending { it.id }
                                 val data = FreeMarkerContent(
                                     "pages/places.ftl",
@@ -134,7 +147,7 @@ fun Application.placesRoutes(placesService: PlacesService, userService: UserServ
 
                                 call.respond(HttpStatusCode.Accepted, data)
                             } else {
-                                placesService.addNewPlace(street, crossStreet, position, latitude, longitude, user.id)
+//                                placesService.addNewPlace(street, crossStreet, position, latitude, longitude, user.id)
                                 val data = FreeMarkerContent(
                                     "pages/places.ftl",
                                     mapOf(
@@ -212,14 +225,14 @@ fun Application.placesRoutes(placesService: PlacesService, userService: UserServ
                             ?: return@patch call.respondText("""Missing "longitude" field""")
 
                     try {
-                        placesService.updatePlace(
-                            id.toUUID(),
-                            street,
-                            crossStreet,
-                            position,
-                            latitude,
-                            longitude
-                        )
+//                        placesService.updatePlace(
+//                            id.toUUID(),
+//                            street,
+//                            crossStreet,
+//                            position,
+//                            latitude,
+//                            longitude
+//                        )
                         call.respond(placesService.getPlaces().sortedBy { it.id })
                     } catch (e: Exception) {
                         println(e.localizedMessage)

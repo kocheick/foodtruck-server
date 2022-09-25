@@ -1,6 +1,7 @@
 package com.shevapro.plugins
 
 import com.shevapro.UUIDSerializer
+import com.shevapro.data.models.Position
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.plugins.*
 import io.ktor.server.application.*
@@ -8,6 +9,7 @@ import io.ktor.server.response.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.util.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -22,8 +24,8 @@ fun Application.configureSerialization() {
     install(ContentNegotiation) {
         json(  Json {
             prettyPrint = true
-            isLenient = true
             ignoreUnknownKeys = true
+            coerceInputValues = true
         })
 
     }
@@ -58,5 +60,20 @@ object ExceptionSerializer : KSerializer<Exception> {
 
     override fun serialize(encoder: Encoder, value: Exception) {
         TODO("Not yet implemented")
+    }
+}
+
+object PositionSerializer : KSerializer<Position> {
+    override fun deserialize(decoder: Decoder): Position {
+        val value = decoder.decodeString().uppercase()
+        return Position.values().single { it.name == value }
+    }
+
+    override val descriptor: SerialDescriptor
+        get() = PrimitiveSerialDescriptor("Position", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: Position) {
+
+        encoder.encodeString(value.name)
     }
 }

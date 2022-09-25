@@ -9,20 +9,28 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 object DatabaseFactory {
+
     fun init() {
-        Database.connect(hikari())
+        val dataSource = hikari()
+
+//        val flyway = Flyway.configure().dataSource(dataSource).baselineOnMigrate(true).load()
+
+        Database.connect(dataSource)
+
         transaction {
 //            resetTables()
-
-            SchemaUtils.create(Places,Users,UsersPlaces,PlacesHours)
+//            flyway.migrate()
+            SchemaUtils.createMissingTablesAndColumns(Places,Users,UsersPlaces,PlacesHours)
 
         }
+
     }
 
     private fun hikari(): HikariDataSource {

@@ -14,7 +14,9 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import java.net.URI
+import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.crypto.Mac
@@ -25,10 +27,10 @@ object Utils {
 
 
     fun getPosition(stringName: String) = when (stringName) {
-        Position.SOUTH_WEST.name -> Position.SOUTH_WEST
-        Position.SOUTH_EAST.name -> Position.SOUTH_EAST
-        Position.NORD_EAST.name -> Position.NORD_EAST
-        Position.NORD_WEST.name -> Position.NORD_WEST
+//        Position.SOUTH_WEST.name -> Position.SOUTH_WEST
+//        Position.SOUTH_EAST.name -> Position.SOUTH_EAST
+//        Position.NORD_EAST.name -> Position.NORD_EAST
+//        Position.NORD_WEST.name -> Position.NORD_WEST
         else -> Position.N_A
     }
 
@@ -114,18 +116,27 @@ object UUIDSerializer : KSerializer<UUID> {
 }
 
 object LocalTimeSerializer : KSerializer<LocalTime> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("LocalTimeInt", PrimitiveKind.INT)
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("LocalTimeString", PrimitiveKind.STRING)
 
     @OptIn(InternalSerializationApi::class)
     override fun deserialize(decoder: Decoder): LocalTime {
-        val hour: Int = decoder.decodeString().substringBefore(":").toInt()
-        val min: Int = decoder.decodeString().substringBefore(":").toInt()
-        // Always use 0 as a value for alwaysZero property because we decided to do so.
-        return LocalTime.of(hour, min)
+//        val hour: Int = decoder.decodeString().substringBefore(":").toInt()
+//        val min: Int = decoder.decodeString().substringAfter(":").toInt()
+//        // Always use 0 as a value for alwaysZero property because we decided to do so.
+//        println("UTILS - $hour: $min")
+        val string = decoder.decodeString()
+//        println("UTILS - $string")
+//       val formatter = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH)
+//        val time = LocalDateTime.parse(string, formatter)
+        val hour: Int = string.substringBefore(":").toInt()
+        val min: Int = string.substringAfter(":").toInt()
+//
+        return LocalTime.of(hour,min)
 
     }
 
     override fun serialize(encoder: kotlinx.serialization.encoding.Encoder, value: LocalTime) {
+
         encoder.encodeString(value.toString())
 
     }

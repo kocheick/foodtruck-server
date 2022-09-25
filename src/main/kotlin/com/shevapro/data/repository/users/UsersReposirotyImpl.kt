@@ -48,11 +48,12 @@ class UsersReposirotyImpl : UsersReposiroty {
     }
 
 
-    override suspend fun update(id: UUID, email: String, username: String) {
+    override suspend fun updateUserInfo(id: UUID, email: String, username: String, newPasswordHash: String) {
         dbQuery {
             Users.update({ Users.id eq id }) {
                 it[this.email] = email
                 it[this.username] = username
+                it[this.passwordHash] = newPasswordHash
             }
         }
     }

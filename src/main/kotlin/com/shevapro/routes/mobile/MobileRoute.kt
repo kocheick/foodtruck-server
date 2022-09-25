@@ -5,10 +5,11 @@ import com.shevapro.services.UserService
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 
-fun Application.mobileAppRoute(userService: UserService ,placesService: PlacesService) {
+fun Route.mobileAppRoute(userService: UserService ,placesService: PlacesService) {
+        route("/mobile"){
 
-            this@mobileAppRoute.mobilePlacesRoute(placesService,userService)
-            this@mobileAppRoute.mobileUsersRoute(userService)
-    this@mobileAppRoute.mobileVoteRoute(userService,placesService)
-
+            mobilePlacesRoute(placesService,userService)
+            mobileUsersRoute(userService)
+            mobileVoteRoute(userService,placesService)
+        }
 }
