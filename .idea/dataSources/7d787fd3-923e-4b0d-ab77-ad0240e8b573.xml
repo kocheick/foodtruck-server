@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataSource name="PostgreSQL - postgres@localhost">
-  <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.43">
+  <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.45">
     <root id="1"/>
     <database id="2" parent="1" name="places">
       <Current>1</Current>
@@ -16,9 +16,6 @@
 12896||10|U|G</Grants>
       <IntrospectionStateNumber>2624</IntrospectionStateNumber>
       <ObjectId>24775</ObjectId>
-      <Relations>sequence|table|131689|131691|1
-sequence|table|131707|131709|1
-</Relations>
       <OwnerName>shevapro</OwnerName>
     </database>
     <database id="3" parent="1" name="postgres">
@@ -3284,13 +3281,13 @@ sequence|table|131707|131709|1
       <OwnerName>postgres</OwnerName>
     </schema>
     <sequence id="247" parent="246" name="placeshours_id_seq">
-      <DataType>integer|0s</DataType>
+      <DasType>integer|0s</DasType>
       <ObjectId>131707</ObjectId>
       <StateNumber>2621</StateNumber>
       <OwnerName>shevapro</OwnerName>
     </sequence>
     <sequence id="248" parent="246" name="usersplaces_id_seq">
-      <DataType>integer|0s</DataType>
+      <DasType>integer|0s</DasType>
       <ObjectId>131689</ObjectId>
       <StateNumber>2621</StateNumber>
       <OwnerName>shevapro</OwnerName>
@@ -3316,61 +3313,61 @@ sequence|table|131707|131709|1
       <OwnerName>shevapro</OwnerName>
     </table>
     <column id="253" parent="249" name="place_id">
-      <DataType>uuid|0s</DataType>
+      <DasType>uuid|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>2950</TypeId>
     </column>
     <column id="254" parent="249" name="street_position">
-      <DataType>varchar(15)|0s</DataType>
+      <DasType>varchar(15)|0s</DasType>
       <Position>2</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>1043</TypeId>
     </column>
     <column id="255" parent="249" name="street">
-      <DataType>varchar(50)|0s</DataType>
+      <DasType>varchar(50)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>1043</TypeId>
     </column>
     <column id="256" parent="249" name="cross_street">
-      <DataType>varchar(50)|0s</DataType>
+      <DasType>varchar(50)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>1043</TypeId>
     </column>
     <column id="257" parent="249" name="latitude">
-      <DataType>double precision|0s</DataType>
+      <DasType>double precision|0s</DasType>
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>701</TypeId>
     </column>
     <column id="258" parent="249" name="longitude">
-      <DataType>double precision|0s</DataType>
+      <DasType>double precision|0s</DasType>
       <NotNull>1</NotNull>
       <Position>6</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>701</TypeId>
     </column>
     <column id="259" parent="249" name="created_at">
-      <DataType>bigint|0s</DataType>
+      <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>7</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>20</TypeId>
     </column>
     <column id="260" parent="249" name="modified_at">
-      <DataType>bigint|0s</DataType>
+      <DasType>bigint|0s</DasType>
       <Position>8</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>20</TypeId>
     </column>
     <column id="261" parent="249" name="user_uuid">
-      <DataType>uuid|0s</DataType>
+      <DasType>uuid|0s</DasType>
       <NotNull>1</NotNull>
       <Position>9</Position>
       <StateNumber>2621</StateNumber>
@@ -3407,36 +3404,37 @@ sequence|table|131707|131709|1
       <UnderlyingIndexId>131682</UnderlyingIndexId>
     </key>
     <column id="265" parent="250" name="id">
-      <DataType>integer|0s</DataType>
+      <DasType>integer|0s</DasType>
       <DefaultExpression>nextval(&apos;placeshours_id_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>2621</StateNumber>
+      <SequenceId>131707</SequenceId>
       <TypeId>23</TypeId>
     </column>
     <column id="266" parent="250" name="place_id">
-      <DataType>uuid|0s</DataType>
+      <DasType>uuid|0s</DasType>
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>2950</TypeId>
     </column>
     <column id="267" parent="250" name="week_day">
-      <DataType>integer|0s</DataType>
+      <DasType>integer|0s</DasType>
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>23</TypeId>
     </column>
     <column id="268" parent="250" name="open_hour">
-      <DataType>text|0s</DataType>
+      <DasType>text|0s</DasType>
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>25</TypeId>
     </column>
     <column id="269" parent="250" name="close_hour">
-      <DataType>text|0s</DataType>
+      <DasType>text|0s</DasType>
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StateNumber>2621</StateNumber>
@@ -3473,35 +3471,35 @@ sequence|table|131707|131709|1
       <UnderlyingIndexId>131716</UnderlyingIndexId>
     </key>
     <column id="273" parent="251" name="user_ID">
-      <DataType>uuid|0s</DataType>
+      <DasType>uuid|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>2950</TypeId>
     </column>
     <column id="274" parent="251" name="email">
-      <DataType>varchar(128)|0s</DataType>
+      <DasType>varchar(128)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>1043</TypeId>
     </column>
     <column id="275" parent="251" name="username">
-      <DataType>varchar(32)|0s</DataType>
+      <DasType>varchar(32)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>1043</TypeId>
     </column>
     <column id="276" parent="251" name="password_hash">
-      <DataType>varchar(40)|0s</DataType>
+      <DasType>varchar(40)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>1043</TypeId>
     </column>
     <column id="277" parent="251" name="creation_date">
-      <DataType>bigint|0s</DataType>
+      <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StateNumber>2621</StateNumber>
@@ -3541,27 +3539,28 @@ sequence|table|131707|131709|1
       <UnderlyingIndexId>131677</UnderlyingIndexId>
     </key>
     <column id="282" parent="252" name="id">
-      <DataType>integer|0s</DataType>
+      <DasType>integer|0s</DasType>
       <DefaultExpression>nextval(&apos;usersplaces_id_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>2621</StateNumber>
+      <SequenceId>131689</SequenceId>
       <TypeId>23</TypeId>
     </column>
     <column id="283" parent="252" name="user_id">
-      <DataType>uuid|0s</DataType>
+      <DasType>uuid|0s</DasType>
       <Position>2</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>2950</TypeId>
     </column>
     <column id="284" parent="252" name="place_id">
-      <DataType>uuid|0s</DataType>
+      <DasType>uuid|0s</DasType>
       <Position>3</Position>
       <StateNumber>2621</StateNumber>
       <TypeId>2950</TypeId>
     </column>
     <column id="285" parent="252" name="date">
-      <DataType>bigint|0s</DataType>
+      <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StateNumber>2621</StateNumber>

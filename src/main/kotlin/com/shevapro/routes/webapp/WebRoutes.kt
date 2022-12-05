@@ -19,7 +19,6 @@ fun Application.webAppRoute(userService: UserService, placesService: PlacesServi
             this@webAppRoute.usersRoutes(userService)
 
 
-
             get("about") {
                 val user = call.sessions.get<UserSession>()?.let { userService.getUserByID(it.userId) }
 

@@ -29,7 +29,7 @@ fun Route.mobileUsersRoute(userService: UserService) {
                 val user =
                     userService.getUserByID(userID) ?: return@get call.respond(
                         HttpStatusCode.BadRequest,
-                        NetworkResult.Error("Invalid id")
+                        NetworkResult.Error("User with following ID does not exist: $userID")
                     )
                 call.respond(user)
             }

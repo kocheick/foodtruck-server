@@ -13,6 +13,8 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
 const val API_VERSION = "/api/v1"
+const val MOBILE_API_URL = "$API_VERSION/mobile"
+
 
 fun Application.configureRouting() {
     // init Database
@@ -31,11 +33,11 @@ fun Application.configureRouting() {
             resources("templates/js")
 
         }
-
 //        this@configureRouting.webAppRoute(userService, placesService)
 //        this@configureRouting.mobileAppRoute(userService, placesService)
 
         mobileAppRoute(userService, placesService)
+
 
 
     }
